@@ -6,8 +6,14 @@
 
 ## Description
 
-The split plugin allows filtering DNS Server response Records based on network definitions. That way
+The split plugin allows filtering DNS Server responses Records based on network definitions. That way
 you do not need to run multiple DNS servers to handle split DNS.
+
+If there are multiple A Records in the response, only the records matching the defined network will be returned
+to a matching querier, and the records not matching the network to the other sources.
+
+This plugin is not about security, it is design only to give a better answer to the incoming source IP,
+if you need to apply security filtering rules, please consider using the [**coredns** *acl*](https://coredns.io/plugins/acl/) plugin.
 
 ## Compilation
 
@@ -21,7 +27,7 @@ A simple way to consume this plugin, is by adding the following on [plugin.cfg](
 split:go.linka.cloud/coredns-split
 ~~~
 
-Put this lower in the plugin list, so that *split* is executed after any of the other plugins.
+Put this higher in the plugin list, so that *split* is before after any of the other plugins.
 
 After this you can compile coredns by:
 
@@ -57,22 +63,17 @@ This plugin reports readiness to the ready plugin. It will be immediately ready.
 
 ## Examples
 
-In this configuration, we forward all queries to 9.9.9.9 and print "example" whenever we receive
-a query.
+In this configuration, we forward all queries to 9.9.9.9 and filter out A records pointing to an IP address
+in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
 
 ~~~ corefile
 . {
+  example {
+    10.10.10.0/24 {
+        net 192.168.0.0/24 192.168.1.0/24
+    }
+  }
   forward . 9.9.9.9
-  example
-}
-~~~
-
-Or without any external connectivity:
-
-~~~ corefile
-. {
-  whoami
-  example
 }
 ~~~
 

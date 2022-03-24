@@ -13,9 +13,4 @@ func TestSetup(t *testing.T) {
 	if err := setup(c); err != nil {
 		t.Fatalf("Expected no errors, but got: %v", err)
 	}
-
-	c = caddy.NewTestController("dns", `split more`)
-	if err := setup(c); err == nil {
-		t.Fatalf("Expected errors, but got: %v", err)
-	}
 }

@@ -1,10 +1,7 @@
 package split
 
 import (
-	"bytes"
 	"context"
-	golog "log"
-	"strings"
 	"testing"
 
 	"github.com/coredns/coredns/plugin/pkg/dnstest"
@@ -17,11 +14,6 @@ func TestExample(t *testing.T) {
 	// Create a new Split Plugin. Use the test.ErrorHandler as the next plugin.
 	x := Split{Next: test.ErrorHandler()}
 
-	// Setup a new output buffer that is *not* standard output, so we can check if
-	// example is really being printed.
-	b := &bytes.Buffer{}
-	golog.SetOutput(b)
-
 	ctx := context.TODO()
 	r := new(dns.Msg)
 	r.SetQuestion("example.org.", dns.TypeA)
@@ -31,7 +23,5 @@ func TestExample(t *testing.T) {
 
 	// Call our plugin directly, and check the result.
 	x.ServeDNS(ctx, rec, r)
-	if a := b.String(); !strings.Contains(a, "[INFO] plugin/split: example") {
-		t.Errorf("Failed to print '%s', got %s", "[INFO] plugin/split: example", a)
-	}
+	t.Log(rec.Msg)
 }
