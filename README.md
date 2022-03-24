@@ -12,8 +12,8 @@ you do not need to run multiple DNS servers to handle split DNS.
 If there are multiple A Records in the response, only the records matching the defined network will be returned
 to a matching querier, and the records not matching the network to the other sources.
 
-This plugin is not about security, it is design only to give a better answer to the incoming source IP,
-if you need to apply security filtering rules, please consider using the [**coredns** *acl*](https://coredns.io/plugins/acl/) plugin.
+⚠️ This plugin is not much about security, it is designed only to give a better answer to the incoming source IP,
+if you need to apply security filtering rules, please consider using the [**coredns** *acl*](https://coredns.io/plugins/acl/) plugin. 
 
 ## Compilation
 
