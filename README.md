@@ -1,13 +1,13 @@
-# example
+# split
 
 ## Name
 
-*example* - prints "example" after a query is handled.
+*split* - Filter DNS Server response Records based on network definitions and request source IP.
 
 ## Description
 
-The example plugin prints "example" on every query that got handled by the server. It serves as
-documentation for writing CoreDNS plugins.
+The split plugin allows filtering DNS Server response Records based on network definitions. That way
+you do not need to run multiple DNS servers to handle split DNS.
 
 ## Compilation
 
@@ -18,10 +18,10 @@ The [manual](https://coredns.io/manual/toc/#what-is-coredns) will have more info
 A simple way to consume this plugin, is by adding the following on [plugin.cfg](https://github.com/coredns/coredns/blob/master/plugin.cfg), and recompile it as [detailed on coredns.io](https://coredns.io/2017/07/25/compile-time-enabling-or-disabling-plugins/#build-with-compile-time-configuration-file).
 
 ~~~
-example:github.com/coredns/example
+split:go.linka.cloud/coredns-split
 ~~~
 
-Put this early in the plugin list, so that *example* is executed before any of the other plugins.
+Put this lower in the plugin list, so that *split* is executed after any of the other plugins.
 
 After this you can compile coredns by:
 
@@ -39,7 +39,8 @@ make
 ## Syntax
 
 ~~~ txt
-example
+split
+# TODO: docs
 ~~~
 
 ## Metrics

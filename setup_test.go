@@ -1,4 +1,4 @@
-package example
+package split
 
 import (
 	"testing"
@@ -9,12 +9,12 @@ import (
 // TestSetup tests the various things that should be parsed by setup.
 // Make sure you also test for parse errors.
 func TestSetup(t *testing.T) {
-	c := caddy.NewTestController("dns", `example`)
+	c := caddy.NewTestController("dns", `split`)
 	if err := setup(c); err != nil {
 		t.Fatalf("Expected no errors, but got: %v", err)
 	}
 
-	c = caddy.NewTestController("dns", `example more`)
+	c = caddy.NewTestController("dns", `split more`)
 	if err := setup(c); err == nil {
 		t.Fatalf("Expected errors, but got: %v", err)
 	}
