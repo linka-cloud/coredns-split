@@ -72,8 +72,9 @@ So you can provide a fallback server that will be used to get the public record.
     net 10.1.1.0/24 10.1.2.0/24 # implicitely: allow 10.1.1.0/24 10.1.2.0/24
     fallback 8.8.8.8
   }
-  file example.org
-  forward . 9.9.9.9 {
+  # we could also use any records source
+  # e.g.: file example.org
+  forward . 10.10.10.1 9.9.9.9 {
     policy sequential
   }
 }
