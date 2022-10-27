@@ -1,0 +1,15 @@
+$ORIGIN example.org.
+@     3600    IN      SOA   ns1.example.org. hostmaster.example.org. (
+                                2003080800 ; serial number
+                                12h        ; refresh
+                                15m        ; update retry
+                                3w         ; expiry
+                                2h         ; minimum
+                                )
+ns1     IN A    127.0.0.1
+www     IN A    100.100.100.10
+net1    IN A    10.10.10.10
+net2    IN A    10.1.1.10
+net2    IN A    12.12.12.10
+net3    IN A    10.1.2.10
+net3    IN A    12.12.13.10

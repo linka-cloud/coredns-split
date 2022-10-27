@@ -22,17 +22,18 @@ var log = clog.NewWithPlugin("split")
 type Split struct {
 	Next plugin.Handler
 
-	Rule []rule
+	Rules []Rule
 }
 
-type rule struct {
-	zones    []string
-	networks []network
+type Rule struct {
+	Zones    []string
+	Networks []Network
+	Fallback net.IP
 }
 
-type network struct {
-	record  *net.IPNet
-	allowed []*net.IPNet
+type Network struct {
+	RecordNetwork *net.IPNet
+	Allowed       []*net.IPNet
 }
 
 // ServeDNS implements the plugin.Handler interface. This method gets called when example is used
@@ -65,21 +66,21 @@ type ResponsePrinter struct {
 	state request.Request
 	r     *dns.Msg
 	src   net.IP
-	rules []rule
+	rules []Rule
 }
 
 // NewResponsePrinter returns ResponseWriter.
 func (s Split) NewResponsePrinter(w dns.ResponseWriter, r *dns.Msg) *ResponsePrinter {
 	state := request.Request{W: w, Req: r}
 	ip := net.ParseIP(state.IP())
-	return &ResponsePrinter{ResponseWriter: w, r: r, src: ip, rules: s.Rule, state: state}
+	return &ResponsePrinter{ResponseWriter: w, r: r, src: ip, rules: s.Rules, state: state}
 }
 
 // WriteMsg calls the underlying ResponseWriter's WriteMsg method and prints "example" to standard output.
 func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
-	var rule rule
+	var rule Rule
 	for _, v := range r.rules {
-		zone := plugin.Zones(v.zones).Matches(r.state.Name())
+		zone := plugin.Zones(v.Zones).Matches(r.state.Name())
 		if zone == "" {
 			continue
 		}
@@ -94,9 +95,9 @@ func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
 			answers = append(answers, v)
 			continue
 		}
-		var net *network
-		for _, vv := range rule.networks {
-			if vv.record.Contains(rec.A) {
+		var net *Network
+		for _, vv := range rule.Networks {
+			if vv.RecordNetwork.Contains(rec.A) {
 				net = &vv
 				break
 			}
@@ -106,7 +107,7 @@ func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
 			continue
 		}
 		allowed := false
-		for _, vv := range net.allowed {
+		for _, vv := range net.Allowed {
 			if vv.Contains(r.src) {
 				allowed = true
 				break
@@ -124,5 +125,19 @@ func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
 	} else {
 		res.Answer = answers
 	}
+	if len(res.Answer) != 0 {
+		return r.ResponseWriter.WriteMsg(res)
+	}
+	if rule.Fallback == nil {
+		return nil
+	}
+	c := new(dns.Client)
+	req := r.state.Req.Copy()
+	req.Id = dns.Id()
+	in, _, err := c.Exchange(req, rule.Fallback.String()+":53")
+	if err != nil {
+		return err
+	}
+	res.Answer = append(res.Answer, in.Answer...)
 	return r.ResponseWriter.WriteMsg(res)
 }

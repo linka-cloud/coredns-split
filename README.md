@@ -63,17 +63,27 @@ This plugin reports readiness to the ready plugin. It will be immediately ready.
 
 ## Examples
 
-In this configuration, we forward all queries to 9.9.9.9 and filter out A records pointing to an IP address
-in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
+In this configuration, we forward all queries to 10.10.10.1 and to 9.9.9.9 if 10.10.10.1 did not respond.
+
+**If only used with the forward plugin, the private dns server must be configured as the first forwarded server in the list. Alose, the policy must be configured as sequential, so that the first server is always tried first and the second only if the first do not return any answer.**
+
+We filter out A records pointing to an IP address in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
+If the allowed networks are not defined, the plugin will allow the requests from the same network, e.g. 10.10.10.0/24.
+
+If the record exists both as public and private, the private record will be filtered, resulting with no records at all.
+So you can provide a fallback server that will be used to get the public record.
 
 ~~~ corefile
 . {
-  example {
-    10.10.10.0/24 {
-        net 192.168.0.0/24 192.168.1.0/24
-    }
+  split {
+    net 10.10.10.0/24 allow 192.168.0.0/24 192.168.1.0/24
+    net 10.1.1.0/24 10.1.2.0/24 # implicitely: allow 10.1.1.0/24 10.1.2.0/24
+    fallback 8.8.8.8
   }
-  forward . 9.9.9.9
+  file example.org
+  forward . 9.9.9.9 {
+    policy sequential
+  }
 }
 ~~~
 
