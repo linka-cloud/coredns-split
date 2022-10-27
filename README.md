@@ -49,14 +49,6 @@ split
 # TODO: docs
 ~~~
 
-## Metrics
-
-If monitoring is enabled (via the *prometheus* directive) the following metric is exported:
-
-* `coredns_example_request_count_total{server}` - query count to the *example* plugin.
-
-The `server` label indicated which server handled the request, see the *metrics* plugin for details.
-
 ## Ready
 
 This plugin reports readiness to the ready plugin. It will be immediately ready.
@@ -65,7 +57,7 @@ This plugin reports readiness to the ready plugin. It will be immediately ready.
 
 In this configuration, we forward all queries to 10.10.10.1 and to 9.9.9.9 if 10.10.10.1 did not respond.
 
-**If only used with the forward plugin, the private dns server must be configured as the first forwarded server in the list. Alose, the policy must be configured as sequential, so that the first server is always tried first and the second only if the first do not return any answer.**
+**If only used with the forward plugin, the private dns server must be configured as the first forwarded server in the list. The policy must be configured as sequential, so that the first server is always tried first and the second only if the first do not return any answer.**
 
 We filter out A records pointing to an IP address in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
 If the allowed networks are not defined, the plugin will allow the requests from the same network, e.g. 10.10.10.0/24.
