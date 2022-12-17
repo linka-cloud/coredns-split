@@ -59,7 +59,7 @@ In this configuration, we forward all queries to 10.10.10.1 and to 9.9.9.9 if 10
 
 **If only used with the forward plugin, the private dns server must be configured as the first forwarded server in the list. The policy must be configured as sequential, so that the first server is always tried first and the second only if the first do not return any answer.**
 
-We filter out A records pointing to an IP address in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
+We filter out A / CNAME / SRV / PTR records pointing to an IP address in the 10.10.10.0/24 network except for queries coming from the 192.168.0.0/24 and 192.168.1.0/24 networks.
 If the allowed networks are not defined, the plugin will allow the requests from the same network, e.g. 10.10.10.0/24.
 
 If the record exists both as public and private, the private record will be filtered, resulting with no records at all.
